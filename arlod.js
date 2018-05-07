@@ -49,7 +49,7 @@ var download = function(url, dest, cb) {
 //     console.log("GOT HERE", err);
 // });
 
-const program = phantomjs.exec('phantomjs-arlo.js', argv.username, argv.password);
+const program = phantomjs.exec(`${dirname}/phantomjs-arlo.js`, argv.username, argv.password);
 program.stdout.on('data', (data) => {
     // if (data[data.length - 1] == '\n') {
     //     data = data.substr(0, data.length - 1);
