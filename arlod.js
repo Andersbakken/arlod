@@ -19,6 +19,7 @@ var download = function(url, dest, cb) {
 
     // verify response code
     sendReq.on('response', function(response) {
+        // console.log("GOT RESPONSE", response.statusCode);
         if (response.statusCode !== 200) {
             return cb('Response status was ' + response.statusCode);
         }
@@ -34,6 +35,7 @@ var download = function(url, dest, cb) {
     sendReq.pipe(file);
 
     file.on('finish', function() {
+        // console.log("BALLS FINISHED");
         file.close(cb);  // close() is async, call cb after close completes.
     });
 
@@ -43,12 +45,16 @@ var download = function(url, dest, cb) {
     });
 };
 
+// download("https://arlos3-prod-z2.s3.amazonaws.com/5103011d_6ec6_4e8d_96c9_14b0050dcbf6/5RW2N-300-8866650/52M1817EB7562/fullFrameSnapshot.jpg?AWSAccessKeyId=AKIAICS2UAC4WFSD6C2A&Expires=1525754614&Signature=Pi6IybHaioeCRvA5WZ5llsLYCoc%3D", argv.output, function(err) {
+//     console.log("GOT HERE", err);
+// });
+
 const program = phantomjs.exec('phantomjs-arlo.js', argv.username, argv.password);
 program.stdout.on('data', (data) => {
     // if (data[data.length - 1] == '\n') {
     //     data = data.substr(0, data.length - 1);
     // }
-    console.log(`stdout: ${data}`);
+    // console.log(`stdout: ${data}`);
     if (data[0] == 123) {
         try {
             var msg = JSON.parse(data);
@@ -78,6 +84,6 @@ program.stderr.on('data', (data) => {
 // program.stderr.pipe(process.stderr);
 program.on('exit', code => {
     // console.log("Got exit", code);
-    process.exit();
+    // process.exit();
     // do something on end
 })
