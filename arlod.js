@@ -3,7 +3,15 @@
 const phantomjs = require('phantomjs-prebuilt');
 var fs = require('fs');
 var request = require('request');
-const argv = require('minimist')(process.argv.slice(2));
+let argv = require('minimist')(process.argv.slice(2));
+
+if (!argv.output) {
+    if (!argv.dir) {
+        argv.dir = ".";
+    }
+    argv.output = argv.dir + `/${new Date().toString()}.jpg`;
+}
+
 
 var download = function(url, dest, cb) {
     var file = fs.createWriteStream(dest);
@@ -45,9 +53,9 @@ program.stdout.on('data', (data) => {
         try {
             var msg = JSON.parse(data);
             if (msg.success && typeof msg.url === 'string') {
-                console.log("GOTS IT", msg);
+                // console.log("GOTS IT", msg);
                 download(msg.url, argv.output, (err) => {
-                    console.log("WE HERE", err);
+                    // console.log("WE HERE", err);
                     if (err) {
                         console.error("Failed to download image", err);
                         process.exit(1);
