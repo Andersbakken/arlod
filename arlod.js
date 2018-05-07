@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
 const phantomjs = require('phantomjs-prebuilt');
-var fs = require('fs');
-var request = require('request');
+const dateformat = require('dateformat');
+const fs = require('fs');
+const request = require('request');
 let argv = require('minimist')(process.argv.slice(2));
 
 if (!argv.output) {
     if (!argv.dir) {
         argv.dir = ".";
     }
-    argv.output = argv.dir + `/${new Date().toString()}.jpg`;
+    argv.output = argv.dir + `/${dateformat('yyyy-mm-dd HH:MM:ss')}.jpg`;
 
     try {
         var files = [];
