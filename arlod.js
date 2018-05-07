@@ -24,14 +24,15 @@ if (!argv.output) {
             }
         });
         // console.log("GOT SIZE", size);
-        if (size > 1024 * 1024 * 512 || true) {
+        if (size > 1024 * 1024 * 512) {
             files.sort(function(a, b) {
                 return a.stat.ctimeMs - b.stat.ctimeMs;
             });
             var i = 0;
-            while (i < files.length && (size > 1024 * 1024 * 512 || true)) {
+            while (i < files.length && size > 1024 * 1024 * 512) {
                 // console.log("WOULD UNLINK", files[i].file);
                 fs.unlinkSync(argv.dir + "/" + files[i].file);
+                size -= files[i].stat.size;
                 ++i;
             }
         }
