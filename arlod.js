@@ -11,40 +11,42 @@ if (!argv.output) {
         argv.dir = ".";
     }
     argv.output = argv.dir + `/${dateformat('yyyy-mm-dd HH:MM:ss')}.jpg`;
-
-    try {
-        var files = [];
-        var size = 0;
-        fs.readdirSync(argv.dir).forEach((file) => {
-            if (file.substr(-4) === '.jpg') {
-                // files.push({time: new Date(file.substr(0, file.length - 4)).valueOf(), file: file});
-                files.push({file: file, stat: fs.statSync(argv.dir + "/" + file)});
-                size += files[files.length - 1].stat.size;
-                // var stat =
-                // console.log("GOT STAT", stat);
-            }
-        });
-        // console.log("GOT SIZE", size);
-        if (size > 1024 * 1024 * 1024) {
-            files.sort(function(a, b) {
-                return a.stat.ctimeMs - b.stat.ctimeMs;
-            });
-            var i = 0;
-            while (i < files.length && size > 1024 * 1024 * 1024) {
-                // console.log("WOULD UNLINK", files[i].file);
-                fs.unlinkSync(argv.dir + "/" + files[i].file);
-                size -= files[i].stat.size;
-                ++i;
-            }
-        }
-        // console.log(files);
-        // files.sort(
-
-        // process.exit();
-    } catch (err) {
-        console.error("GOT AN ERROR");
-    }
 }
+
+try {
+    var files = [];
+    var size = 0;
+    fs.readdirSync(argv.dir).forEach((file) => {
+        if (file.substr(-4) === '.jpg') {
+            // files.push({time: new Date(file.substr(0, file.length - 4)).valueOf(), file: file});
+            files.push({file: file, stat: fs.statSync(argv.dir + "/" + file)});
+            size += files[files.length - 1].stat.size;
+            // var stat =
+            // console.log("GOT STAT", stat);
+        }
+    });
+    // console.log("GOT SIZE", size);
+    let limit = argv.limit || 256 * 1024 * 1024;
+    if (size > limit) {
+        files.sort(function(a, b) {
+            return a.stat.ctimeMs - b.stat.ctimeMs;
+        });
+        var i = 0;
+        while (i < files.length && size > limit) {
+            // console.log("WOULD UNLINK", files[i].file);
+            fs.unlinkSync(argv.dir + "/" + files[i].file);
+            size -= files[i].stat.size;
+            ++i;
+        }
+    }
+    // console.log(files);
+    // files.sort(
+
+    // process.exit();
+} catch (err) {
+    console.error("GOT AN ERROR");
+}
+
 
 var download = function(url, dest, cb) {
     var file = fs.createWriteStream(dest);
